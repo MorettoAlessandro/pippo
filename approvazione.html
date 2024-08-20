@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approvazione Rapportini</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Approvazione Rapportini</h1>
+
+        <table id="rapportini-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Numero Ticket</th>
+                    <th>Tipo</th>
+                    <th>Descrizione</th>
+                    <th>Tecnico</th>
+                    <th>Cliente</th>
+                    <th>Tempo Impiegato</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody id="rapportini-body">
+                <!-- I rapportini verranno inseriti qui dinamicamente -->
+            </tbody>
+        </table>
+
+        <a href="lista-rapportini.html" class="btn-submit">Torna alla Lista Rapportini</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
+            const rapportiniBody = document.getElementById('rapportini-body');
+
+            function renderRapportini() {
+                rapportiniBody.innerHTML = '';
+                rapportini.forEach((rapportino, index) => {
+                    if (rapportino.stato === 'in attesa') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(rapportino.data).toLocaleString()}</td>
+                            <td>${rapportino.numeroTicket}</td>
+                            <td>${rapportino.tipo}</td>
+                            <td>${rapportino.descrizione}</td>
+                            <td>${rapportino.tecnico}</td>
+                            <td>${rapportino.cliente}</td>
+                            <td>${rapportino.tempoImpegnato} ore</td>
+                            <td>
+                                <button class="btn-approve" data-index="${index}">Approva</button>
+                                <button class="btn-reject" data-index="${index}">Rifiuta</button>
+                            </td>
+                        `;
+                        rapportiniBody.appendChild(row);
+                    }
+                });
+
+                // Gestisci approvazione e rifiuto dei rapportini
+                document.querySelectorAll('.btn-approve').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        rapportini[index].stato = 'approvato';
+                        localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                        renderRapportini();
+                    });
+                });
+
+                document.querySelectorAll('.btn-reject').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        rapportini[index].stato = 'rifiutato';
+                        localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                        renderRapportini();
+                    });
+                });
+            }
+
+            renderRapportini();
+        });
+    </script>
+</body>
+</html>
