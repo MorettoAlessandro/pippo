@@ -1,18 +1,19 @@
-/* Reset di base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Definizione delle variabili per i colori */
+:root {
+    --primary-bg: #2A609F;
+    --secondary-bg: #fff;
+    --text-light: #fff;
+    --text-dark: #333;
+    --approved-bg: #d4edda;
+    --deleted-bg: #f8d7da;
+    --deleted-fade-out: rgba(248, 215, 218, 0); /* Opacità zero */
 }
 
-html {
-    font-size: 16px;
-}
-
+/* Base styling */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--secondary-bg);
+    color: var(--text-dark);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,18 +27,17 @@ body {
     max-width: 1200px;
     margin: auto;
     padding: 25px;
-    background: #fff;
-    border-radius: 16px; /* Bordo arrotondato */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Ombra delicata */
-    border: 2px solid #2A609F;
+    background: var(--secondary-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-bg);
 }
 
 h1 {
     text-align: center;
     font-size: 2rem;
-    color: #2A609F;
+    color: var(--primary-bg);
     margin-bottom: 20px;
-    font-family: 'Segoe UI', sans-serif;
 }
 
 table {
@@ -46,28 +46,90 @@ table {
     margin: 20px 0;
     overflow-x: auto;
     display: block;
-    border-radius: 12px; /* Bordo arrotondato */
-    overflow: hidden; /* Per assicurarsi che gli angoli arrotondati appaiano */
-}
-
-th, td {
-    padding: 16px 20px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-size: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 th {
-    background-color: #2A609F; /* Blu del logo */
-    color: #2A609F;  /* Cambia il colore del testo delle intestazioni al blu */
-    font-weight: bold;
+    background-color: var(--primary-bg);
+    color: var(--text-light);
 }
 
 td {
-    background-color: #fff;
-    color: #333;
+    background-color: var(--secondary-bg);
+    color: var(--text-dark);
 }
 
+.btn {
+    display: inline-block;
+    background-color: var(--primary-bg);
+    color: var(--text-light);
+    border: 2px solid var(--primary-bg);
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s;
+    margin: 5px 0;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    background-color: #1F4A7A;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    color: var(--text-light);
+}
+
+.btn.delete {
+    background-color: #67A547;
+    color: var(--text-light);
+}
+
+.btn.delete:hover {
+    background-color: #4E7C35;
+}
+
+textarea, input[type="time"] {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    resize: vertical;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: border 0.3s;
+}
+
+textarea {
+    height: 80px;
+}
+
+textarea:focus, input[type="time"]:focus {
+    border-color: var(--primary-bg);
+}
+
+.approved {
+    background-color: var(--approved-bg);
+    color: var(--text-dark);
+    border-radius: 12px;
+    transition: background-color 0.3s;
+}
+
+.deleted {
+    background-color: var(--deleted-bg);
+    color: var(--text-dark);
+    border-radius: 12px;
+    transition: background-color 1s ease, opacity 0.5s ease;
+}
+
+.deleted.fade-out {
+    opacity: var(--deleted-fade-out);
+}
+
+/* Media queries */
 @media (max-width: 768px) {
     th, td {
         padding: 14px 16px;
@@ -78,81 +140,6 @@ td {
         display: block;
         overflow-x: auto;
     }
-}
-
-.btn {
-    display: inline-block;
-    background-color: #2A609F;
-    color: #2A609F; /* Cambia il colore del testo del bottone al blu */
-    border: 2px solid #2A609F; /* Aggiunge un bordo per garantire la visibilità */
-    padding: 12px 20px;
-    border-radius: 25px; /* Bottoni più arrotondati */
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.3s;
-    margin: 5px 0;
-    font-size: 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra dei bottoni */
-}
-
-.btn:hover {
-    background-color: #1F4A7A;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px); /* Sollevamento al passaggio del mouse */
-    color: #fff; /* Il testo diventa bianco al passaggio del mouse */
-}
-
-.btn.delete {
-    background-color: #67A547;
-    color: #fff; /* Mantiene il testo bianco per il pulsante Elimina */
-}
-
-.btn.delete:hover {
-    background-color: #4E7C35;
-}
-
-.action-buttons {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-textarea, input[type="time"] {
-    width: 100%;
-    border-radius: 12px; /* Input e textarea arrotondati */
-    border: 1px solid #ddd;
-    padding: 10px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    resize: vertical;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Leggera ombra interna */
-    transition: border 0.3s;
-}
-
-textarea {
-    height: 80px;
-}
-
-textarea:focus, input[type="time"]:focus {
-    border-color: #2A609F;
-}
-
-.approved {
-    background-color: #d4edda;
-    border-radius: 12px; /* Arrotondato anche per le righe */
-    transition: background-color 0.3s;
-}
-
-.deleted {
-    background-color: #f8d7da;
-    border-radius: 12px;
-    transition: background-color 1s ease, opacity 0.5s ease;
-}
-
-.deleted.fade-out {
-    opacity: 0;
 }
 
 @media (max-width: 480px) {
@@ -177,4 +164,24 @@ textarea:focus, input[type="time"]:focus {
     th, td {
         padding: 12px 14px;
     }
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word; /* Permette al testo di andare a capo */
+    white-space: normal;  /* Permette la visualizzazione del testo su più righe */
+}
+
+td.description {
+    max-width: 200px; /* Imposta una larghezza massima per la colonna della descrizione */
+    overflow: hidden; /* Nasconde il testo che eccede la larghezza */
 }

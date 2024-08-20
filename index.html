@@ -6,14 +6,127 @@
     <title>Inserisci Rapportino</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .radio-group label {
             margin-right: 10px;
+            color: #007bff;
         }
+
         .hidden {
             display: none;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-row label {
+            margin: 0;
+            width: 120px;
+            color: #495057;
+        }
+
+        .form-row input,
+        .form-row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus {
+            border-color: #80bdff;
+            outline: none;
+        }
+
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .time-input-group label {
+            margin: 0;
+        }
+
+        .time-input-group input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .time-input-group input:focus {
+            border-color: #80bdff;
+            outline: none;
+        }
+
+        .time-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #tempo-impiegato {
+            margin: 0;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .form-group button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .form-group textarea:focus {
+            border-color: #80bdff;
+            outline: none;
         }
     </style>
 </head>
@@ -21,35 +134,43 @@
     <div class="container">
         <h1>Inserisci Rapportino</h1>
 
-        <!-- Selezione Tecnico -->
-        <div class="form-group">
-            <label for="tecnico">Tecnico:</label>
-            <select id="tecnico" required>
-                <!-- Opzioni verranno popolate dinamicamente -->
-            </select>
+        <!-- Selezione Tecnico, Cliente, Data e Orario di Inizio in orizzontale -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tecnico">Tecnico:</label>
+                <select id="tecnico" required>
+                    <!-- Opzioni verranno popolate dinamicamente -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" required>
+                    <!-- Opzioni verranno popolate dinamicamente -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="data">Data:</label>
+                <input type="date" id="data" required>
+            </div>
         </div>
 
-        <!-- Selezione Cliente -->
-        <div class="form-group">
-            <label for="cliente">Cliente:</label>
-            <select id="cliente" required>
-                <!-- Opzioni verranno popolate dinamicamente -->
-            </select>
-        </div>
+        <!-- Orario di Inizio e Fine e Tempo Impiegato in orizzontale -->
+        <div class="form-row">
+            <div class="time-group">
+                <div class="time-input-group">
+                    <label for="ora-inizio">Ora Inizio:</label>
+                    <input type="time" id="ora-inizio" required>
+                </div>
 
-        <!-- Data -->
-        <div class="form-group">
-            <label for="data">Data:</label>
-            <input type="date" id="data" required>
-        </div>
+                <div class="time-input-group">
+                    <label for="ora-fine">Ora Fine:</label>
+                    <input type="time" id="ora-fine" required>
+                </div>
 
-        <!-- Orario di Inizio e Fine (sempre visibile) -->
-        <div class="form-group">
-            <label for="ora-inizio">Ora Inizio:</label>
-            <input type="time" id="ora-inizio" required>
-            <label for="ora-fine">Ora Fine:</label>
-            <input type="time" id="ora-fine" required>
-            <p id="tempo-impiegato">Tempo Impiegato: 0 ore</p>
+                <p id="tempo-impiegato">Tempo Impiegato: 0 ore</p>
+            </div>
         </div>
 
         <!-- Tipo di Rapportino -->
@@ -149,54 +270,53 @@
             }
 
             // Salvataggio del rapportino
-// Salvataggio del rapportino
-document.getElementById('salva-rapportino').addEventListener('click', function() {
-    const tecnico = tecnicoSelect.value;
-    const cliente = clienteSelect.value;
-    const data = document.getElementById('data').value;
-    const numeroTicket = document.getElementById('numero-ticket').value;
-    const tipo = document.querySelector('input[name="tipo"]:checked').value;
-    const numeroCommessa = tipo === 'commessa' ? document.getElementById('numero-commessa').value : '';
-    const trasferta = tipo === 'commessa' ? document.getElementById('trasferta').value : '';
-    const oraInizio = document.getElementById('ora-inizio').value;
-    const oraFine = document.getElementById('ora-fine').value;
-    const descrizione = document.getElementById('descrizione').value;
-    const tempoImpegnato = tipo === 'help-desk' || tipo === 'remoto' ? document.getElementById('tempo-impiegato').textContent.replace('Tempo Impiegato: ', '').replace(' ore', '') : '';
+            document.getElementById('salva-rapportino').addEventListener('click', function() {
+                const tecnico = tecnicoSelect.value;
+                const cliente = clienteSelect.value;
+                const data = document.getElementById('data').value;
+                const numeroTicket = document.getElementById('numero-ticket').value;
+                const tipo = document.querySelector('input[name="tipo"]:checked').value;
+                const numeroCommessa = tipo === 'commessa' ? document.getElementById('numero-commessa').value : '';
+                const trasferta = tipo === 'commessa' ? document.getElementById('trasferta').value : '';
+                const oraInizio = document.getElementById('ora-inizio').value;
+                const oraFine = document.getElementById('ora-fine').value;
+                const descrizione = document.getElementById('descrizione').value;
+                const tempoImpegnato = tipo === 'help-desk' || tipo === 'remoto' ? document.getElementById('tempo-impiegato').textContent.replace('Tempo Impiegato: ', '').replace(' ore', '') : '';
 
-    if (data && numeroTicket && tipo && descrizione) {
-        const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
-        rapportini.push({
-            tecnico,
-            cliente,
-            data,
-            numeroTicket,
-            tipo,
-            numeroCommessa,
-            trasferta,
-            oraInizio,
-            oraFine,
-            tempoImpegnato,
-            descrizione,
-            stato: 'in attesa di approvazione'
-        });
-        localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                if (data && numeroTicket && tipo && descrizione) {
+                    const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
+                    rapportini.push({
+                        tecnico,
+                        cliente,
+                        data,
+                        numeroTicket,
+                        tipo,
+                        numeroCommessa,
+                        trasferta,
+                        oraInizio,
+                        oraFine,
+                        tempoImpegnato,
+                        descrizione,
+                        stato: 'in attesa di approvazione'
+                    });
+                    localStorage.setItem('rapportini', JSON.stringify(rapportini));
 
-        // Ripulisci il form
-        document.getElementById('data').value = '';
-        document.getElementById('numero-ticket').value = '';
-        document.querySelector('input[name="tipo"]:checked').checked = false;
-        document.getElementById('numero-commessa').value = '';
-        document.getElementById('trasferta').value = '';
-        document.getElementById('ora-inizio').value = '';
-        document.getElementById('ora-fine').value = '';
-        document.getElementById('tempo-impiegato').textContent = 'Tempo Impiegato: 0 ore';
-        document.getElementById('descrizione').value = '';
+                    // Ripulisci il form
+                    document.getElementById('data').value = '';
+                    document.getElementById('numero-ticket').value = '';
+                    document.querySelector('input[name="tipo"]:checked').checked = false;
+                    document.getElementById('numero-commessa').value = '';
+                    document.getElementById('trasferta').value = '';
+                    document.getElementById('ora-inizio').value = '';
+                    document.getElementById('ora-fine').value = '';
+                    document.getElementById('tempo-impiegato').textContent = 'Tempo Impiegato: 0 ore';
+                    document.getElementById('descrizione').value = '';
 
-        alert('Rapportino salvato e in attesa di approvazione!');
-    } else {
-        alert('Compila tutti i campi obbligatori.');
-    }
-});
+                    alert('Rapportino salvato e in attesa di approvazione!');
+                } else {
+                    alert('Compila tutti i campi obbligatori.');
+                }
+            });
 
         });
     </script>

@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e2e2e2, #ffffff);
             margin: 0;
             padding: 0;
         }
@@ -17,33 +17,56 @@
             max-width: 1200px;
             margin: auto;
             padding: 20px;
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
         }
         h1 {
             text-align: center;
-            color: #333;
+            color: #343a40;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
+        thead th {
+            background-color: #007bff;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+        }
+        tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+        tbody tr:hover {
+            background-color: #e9ecef;
+        }
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #dee2e6;
+            word-wrap: break-word;
+            white-space: normal;
         }
-        th {
-            background-color: #f8f8f8;
+        td.description {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .approved {
-            background-color: #d4edda; /* Colore verde chiaro per i rapportini approvati */
+            background-color: #d4edda;
         }
         .deleted {
-            background-color: #f8d7da; /* Colore rosso chiaro per i rapportini eliminati */
-            transition: background-color 1s ease;
+            background-color: #f8d7da;
+            transition: background-color 1s ease, opacity 1s ease;
         }
         .deleted.fade-out {
             opacity: 0;
@@ -62,9 +85,12 @@
             color: #fff;
             cursor: pointer;
             text-decoration: none;
+            font-size: 0.875em;
+            transition: background-color 0.3s, transform 0.2s;
         }
         .btn:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
         }
         .pdf-btn {
             background-color: #28a745;
@@ -72,21 +98,43 @@
         .pdf-btn:hover {
             background-color: #218838;
         }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .select-all-btn {
+            background-color: #17a2b8;
+        }
+        .select-all-btn:hover {
+            background-color: #138496;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Visualizza Rapportini</h1>
+        <div class="action-buttons">
+            <button class="btn select-all-btn" id="select-all-btn">Seleziona Tutti</button>
+            <button class="btn delete-btn" id="delete-selected-btn">Elimina Selezionati</button>
+        </div>
         <table id="rapportini-table">
             <thead>
                 <tr>
+                    <th></th> <!-- Colonna per le checkbox -->
                     <th>Data</th>
                     <th>Tipo</th>
                     <th>Cliente</th>
                     <th>Tecnico</th>
                     <th>Orario di Inizio</th>
                     <th>Orario di Fine</th>
-                    <th>Descrizione</th>
+                    <th class="description">Descrizione</th>
                     <th>Stato</th>
                     <th>Azioni</th>
                 </tr>
@@ -110,13 +158,14 @@
                 const row = document.createElement('tr');
                 row.classList.add(rapportino.stato === 'confermato' ? 'approved' : rapportino.stato === 'eliminato' ? 'deleted' : '');
                 row.innerHTML = `
+                    <td><input type="checkbox" class="row-checkbox" data-index="${index}"></td>
                     <td>${rapportino.data}</td>
                     <td>${rapportino.tipo}</td>
                     <td>${rapportino.cliente}</td>
                     <td>${rapportino.tecnico}</td>
                     <td>${rapportino.oraInizio}</td>
                     <td>${rapportino.oraFine}</td>
-                    <td>${rapportino.descrizione}</td>
+                    <td class="description">${rapportino.descrizione}</td>
                     <td>${rapportino.stato}</td>
                     <td><button class="btn pdf-btn" data-index="${index}">Scarica PDF</button></td>
                 `;
@@ -132,6 +181,7 @@
                 }
             });
 
+            // Funzione per generare e scaricare il PDF
             function generateAndDownloadPDF(rapportino) {
                 const pdf = new jsPDF();
                 pdf.text(`Data: ${rapportino.data}`, 10, 10);
@@ -145,6 +195,35 @@
 
                 pdf.save(`rapportino-${rapportino.data}.pdf`);
             }
+
+            // Funzione per eliminare i rapportini selezionati
+            document.getElementById('delete-selected-btn').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+                const indicesToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-index'));
+
+                if (indicesToDelete.length === 0) {
+                    alert('Seleziona almeno un rapportino da eliminare.');
+                    return;
+                }
+
+                if (confirm('Sei sicuro di voler eliminare i rapportini selezionati?')) {
+                    const newRapportini = rapportini.filter((_, index) => !indicesToDelete.includes(index.toString()));
+
+                    // Aggiorna il localStorage
+                    localStorage.setItem('visualizzazioneRapportini', JSON.stringify(newRapportini));
+
+                    // Ricarica la pagina per riflettere le modifiche
+                    location.reload();
+                }
+            });
+
+            // Funzione per selezionare/deselezionare tutte le checkbox
+            document.getElementById('select-all-btn').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.row-checkbox');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+                checkboxes.forEach(cb => cb.checked = !allChecked);
+            });
         });
     </script>
 </body>
