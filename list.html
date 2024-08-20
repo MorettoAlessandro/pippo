@@ -3,179 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Rapportini - Inserimento</title>
+    <title>Gestione Rapportini - Lista</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Gestione Rapportini - Inserimento</h1>
+        <h1>Gestione Rapportini - Lista</h1>
 
-        <form id="rapportino-form">
-            <div class="form-group">
-                <label for="tecnico">Tecnico:</label>
-                <input type="text" id="tecnico" name="tecnico" required>
-            </div>
+        <!-- Pulsante per tornare alla pagina di inserimento rapportini -->
+        <div class="form-group">
+            <button onclick="window.location.href='index.html'" class="btn-submit">Torna a Inserimento Rapportino</button>
+        </div>
 
-            <div class="form-group">
-                <label for="numero-ticket">Numero Ticket:</label>
-                <input type="text" id="numero-ticket" name="numero-ticket" required>
-            </div>
+        <table id="rapportini-table">
+            <thead>
+                <tr>
+                    <th>Numero Ticket</th>
+                    <th>Cliente</th>
+                    <th>Data</th>
+                    <th>Tempo Impiegato</th>
+                    <th>Tipo</th>
+                    <th>Numero Commessa</th>
+                    <th>Trasferta</th>
+                    <th>Descrizione</th>
+                    <th>Stato</th>
+                    <th>Tecnico</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody id="rapportini-body">
+                <!-- I rapportini verranno inseriti qui dinamicamente -->
+            </tbody>
+        </table>
 
-            <div class="form-group">
-                <label for="cliente">Cliente:</label>
-                <input type="text" id="cliente" name="cliente" required>
-            </div>
-
-            <div class="form-group">
-                <label for="data">Data:</label>
-                <input type="date" id="data" name="data" required>
-            </div>
-
-            <div class="form-group">
-                <label for="ora-inizio">Ora Inizio:</label>
-                <input type="time" id="ora-inizio" name="ora-inizio" required>
-            </div>
-
-            <div class="form-group">
-                <label for="ora-fine">Ora Fine:</label>
-                <input type="time" id="ora-fine" name="ora-fine" required>
-            </div>
-
-            <div class="form-group" id="tempo-impegnato">
-                <label>Tempo Impegnato:</label>
-                <span id="tempo-impegnato-valore">0 ore</span>
-            </div>
-
-            <div class="form-group">
-                <label for="tipo-rapportino">Tipo Rapportino:</label>
-                <div id="tipo-rapportino" class="horizontal-options">
-                    <label>
-                        <input type="radio" name="tipo" value="commessa" required> Commessa
-                    </label>
-                    <label>
-                        <input type="radio" name="tipo" value="helpdesk" required> Help Desk
-                    </label>
-                    <label>
-                        <input type="radio" name="tipo" value="remoto" required> Remoto
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group" id="numero-commessa-group" style="display: none;">
-                <label for="numero-commessa">Numero Commessa:</label>
-                <input type="text" id="numero-commessa" name="numero-commessa">
-            </div>
-
-            <div class="form-group" id="trasferta-group" style="display: none;">
-                <label for="trasferta">Trasferta (in km):</label>
-                <input type="number" id="trasferta" name="trasferta" min="0">
-            </div>
-
-            <div class="form-group">
-                <label for="descrizione">Descrizione:</label>
-                <textarea id="descrizione" name="descrizione" required></textarea>
-            </div>
-
-            <!-- Pulsanti di conferma e rifiuto rimosso dalla pagina di inserimento -->
-            <button type="submit" class="btn-submit">Aggiungi Rapportino</button>
-            <button type="button" onclick="window.location.href='Lista.html'" class="btn-submit">Visualizza Lista Rapportini</button>
-        </form>
+        <div class="form-group">
+            <button id="unisci-tempi" class="btn-submit">Unisci Tempi Selezionati</button>
+        </div>
     </div>
 
     <script>
-        // Funzione per aggiornare la visibilità dei campi
-        function updateFieldVisibility() {
-            const selectedOption = document.querySelector('#tipo-rapportino input[type="radio"]:checked');
-            const numeroCommessaGroup = document.getElementById('numero-commessa-group');
-            const trasfertaGroup = document.getElementById('trasferta-group');
-            const tempoImpegnato = document.getElementById('tempo-impegnato');
-
-            if (selectedOption) {
-                if (selectedOption.value === 'commessa') {
-                    numeroCommessaGroup.style.display = 'block';
-                    trasfertaGroup.style.display = 'block'; // Mostra trasferta se è commessa
-                } else if (selectedOption.value === 'helpdesk' || selectedOption.value === 'remoto') {
-                    numeroCommessaGroup.style.display = 'none';
-                    trasfertaGroup.style.display = 'block';
-                } else {
-                    numeroCommessaGroup.style.display = 'none';
-                    trasfertaGroup.style.display = 'none';
-                }
-            }
-        }
-
-        // Funzione per calcolare il tempo impegnato
-        function calculateTime() {
-            const oraInizio = document.getElementById('ora-inizio').value;
-            const oraFine = document.getElementById('ora-fine').value;
-            const tempoImpegnato = document.getElementById('tempo-impegnato-valore');
-
-            if (oraInizio && oraFine) {
-                const startTime = new Date(`1970-01-01T${oraInizio}:00`);
-                const endTime = new Date(`1970-01-01T${oraFine}:00`);
-                const diff = (endTime - startTime) / 3600000; // differenza in ore
-                tempoImpegnato.textContent = `${diff.toFixed(2)} ore`;
-            } else {
-                tempoImpegnato.textContent = '0 ore';
-            }
-        }
-
-        // Aggiungi eventi change ai radio button
-        document.querySelectorAll('#tipo-rapportino input[type="radio"]').forEach((radio) => {
-            radio.addEventListener('change', updateFieldVisibility);
-        });
-
-        // Aggiungi eventi input per calcolare il tempo
-        document.getElementById('ora-inizio').addEventListener('change', calculateTime);
-        document.getElementById('ora-fine').addEventListener('change', calculateTime);
-
-        document.getElementById('rapportino-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const tecnico = document.getElementById('tecnico').value;
-            const numeroTicket = document.getElementById('numero-ticket').value;
-            const cliente = document.getElementById('cliente').value;
-            const data = document.getElementById('data').value;
-            const oraInizio = document.getElementById('ora-inizio').value || 'N/A';
-            const oraFine = document.getElementById('ora-fine').value || 'N/A';
-            const tempoImpegnato = document.getElementById('tempo-impegnato-valore').textContent || '0 ore';
-            const tipoSelezionato = document.querySelector('#tipo-rapportino input[type="radio"]:checked').value;
-            const numeroCommessa = (tipoSelezionato === 'commessa') 
-                                    ? document.getElementById('numero-commessa').value 
-                                    : '';
-            const trasferta = (tipoSelezionato === 'commessa') ? document.getElementById('trasferta').value : '';
-            const descrizione = document.getElementById('descrizione').value;
-
+        document.addEventListener('DOMContentLoaded', function() {
             const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
+            const rapportiniBody = document.getElementById('rapportini-body');
 
-            rapportini.push({
-                tecnico,
-                numeroTicket,
-                cliente,
-                data,
-                oraInizio,
-                oraFine,
-                tempoImpegnato,
-                tipoSelezionato,
-                numeroCommessa,
-                trasferta,
-                descrizione,
-                stato: 'in attesa'
+            function formatTime(hours) {
+                return `${hours.toFixed(2)} ore`;
+            }
+
+            function renderTable() {
+                rapportiniBody.innerHTML = '';
+                rapportini.forEach((r, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${r.numeroTicket}</td>
+                        <td>${r.cliente}</td>
+                        <td>${r.data}</td>
+                        <td>${r.tempoImpegnato}</td>
+                        <td>${r.tipoSelezionato}</td>
+                        <td>${r.numeroCommessa || ''}</td>
+                        <td>${r.trasferta || ''}</td>
+                        <td>${r.descrizione}</td>
+                        <td>${r.stato}</td>
+                        <td>${r.tecnico}</td>
+                        <td><button class="btn-delete" data-index="${index}">Cancella</button></td>
+                    `;
+                    rapportiniBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        rapportini.splice(index, 1);
+                        localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                        renderTable();
+                    });
+                });
+            }
+
+            renderTable();
+
+            document.getElementById('unisci-tempi').addEventListener('click', function() {
+                const selectedRows = Array.from(rapportiniBody.querySelectorAll('tr.selected'));
+
+                if (selectedRows.length < 2) {
+                    alert('Seleziona almeno due rapportini per unire i tempi.');
+                    return;
+                }
+
+                let totalHours = 0;
+                let descriptions = [];
+                let clienti = new Set();
+                let tecnici = new Set();
+
+                selectedRows.forEach(row => {
+                    const tempoImpegnato = row.cells[3].textContent;
+                    const hours = parseFloat(tempoImpegnato) || 0;
+                    totalHours += hours;
+
+                    const descrizione = row.cells[7].textContent;
+                    descriptions.push(descrizione);
+
+                    const cliente = row.cells[1].textContent;
+                    clienti.add(cliente);
+
+                    const tecnico = row.cells[9].textContent;
+                    tecnici.add(tecnico);
+                });
+
+                const descrizioneUnificata = descriptions.join('; ');
+                const clienteFinale = clienti.size === 1 ? Array.from(clienti)[0] : 'Unificato';
+                const tecnicoFinale = tecnici.size === 1 ? Array.from(tecnici)[0] : 'Unificato';
+
+                const newRapportino = {
+                    tecnico: tecnicoFinale,
+                    numeroTicket: `Unito-${Date.now()}`, // Un numero ticket unico
+                    cliente: clienteFinale,
+                    data: new Date().toISOString().split('T')[0],
+                    oraInizio: 'N/A',
+                    oraFine: 'N/A',
+                    tempoImpegnato: formatTime(totalHours),
+                    tipoSelezionato: 'Unificato', // Puoi personalizzare
+                    numeroCommessa: '',
+                    trasferta: '',
+                    descrizione: descrizioneUnificata,
+                    stato: 'unito'
+                };
+
+                rapportini.push(newRapportino);
+                localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                renderTable();
             });
 
-            localStorage.setItem('rapportini', JSON.stringify(rapportini));
-
-            // Resetta il form dopo l'inserimento
-            this.reset();
-            updateFieldVisibility(); // Nasconde i campi opzionali
-
-            // Reindirizza alla pagina della lista dei rapportini
-            window.location.href = 'list.html';
+            rapportiniBody.addEventListener('click', function(event) {
+                if (event.target.closest('tr')) {
+                    event.target.closest('tr').classList.toggle('selected');
+                }
+            });
         });
-
-        // Inizializzazione
-        updateFieldVisibility();
-        calculateTime();
     </script>
 </body>
 </html>
