@@ -3,160 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creazione Rapportini</title>
+    <title>Inserisci Rapportino</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Creazione Rapportini</h1>
+        <h1>Inserisci Rapportino</h1>
 
-        <form id="rapportino-form">
-            <div class="form-group">
-                <label for="tecnico">Tecnico</label>
-                <select id="tecnico" name="tecnico" required>
-                    <option value="">Seleziona Tecnico</option>
-                    <!-- Opzioni tecnici verranno caricate dinamicamente -->
-                </select>
+        <!-- Selezione Tecnico -->
+        <div class="form-group">
+            <label for="tecnico">Tecnico:</label>
+            <select id="tecnico" required>
+                <!-- Opzioni verranno popolate dinamicamente -->
+            </select>
+        </div>
+
+        <!-- Selezione Cliente -->
+        <div class="form-group">
+            <label for="cliente">Cliente:</label>
+            <select id="cliente" required>
+                <!-- Opzioni verranno popolate dinamicamente -->
+            </select>
+        </div>
+
+        <!-- Data e Orario -->
+        <div class="form-group">
+            <label for="data">Data e Orario:</label>
+            <input type="datetime-local" id="data" required>
+        </div>
+
+        <!-- Numero Ticket -->
+        <div class="form-group">
+            <label for="numero-ticket">Numero Ticket:</label>
+            <input type="text" id="numero-ticket" required>
+        </div>
+
+        <!-- Tipo di Rapportino -->
+        <div class="form-group">
+            <label for="tipo">Tipo di Rapportino:</label>
+            <div id="tipo" class="radio-group">
+                <label><input type="radio" name="tipo" value="commessa"> Commessa</label>
+                <label><input type="radio" name="tipo" value="help-desk"> Help Desk</label>
+                <label><input type="radio" name="tipo" value="remoto"> Remoto</label>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label for="cliente">Cliente</label>
-                <select id="cliente" name="cliente" required>
-                    <option value="">Seleziona Cliente</option>
-                    <!-- Opzioni clienti verranno caricate dinamicamente -->
-                </select>
-            </div>
+        <!-- Numero Commessa (visibile solo se tipo è "commessa") -->
+        <div class="form-group" id="numero-commessa-group" style="display: none;">
+            <label for="numero-commessa">Numero Commessa:</label>
+            <input type="text" id="numero-commessa">
+        </div>
 
-            <div class="form-group">
-                <label for="data">Data e Ora</label>
-                <input type="datetime-local" id="data" name="data" required>
-            </div>
+        <!-- Trasferta (visibile solo se tipo è "commessa") -->
+        <div class="form-group" id="trasferta-group" style="display: none;">
+            <label for="trasferta">Trasferta (km):</label>
+            <input type="number" id="trasferta" min="0">
+        </div>
 
-            <div class="form-group">
-                <label>Tipo di Rapportino</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="tipo" value="commessa"> Commessa</label>
-                    <label><input type="radio" name="tipo" value="helpdesk"> Help Desk</label>
-                    <label><input type="radio" name="tipo" value="remoto"> Remoto</label>
-                </div>
-            </div>
+        <!-- Tempo Impiegato (visibile solo se tipo è "remoto") -->
+        <div class="form-group" id="tempo-group" style="display: none;">
+            <label for="ora-inizio">Ora Inizio:</label>
+            <input type="time" id="ora-inizio" required>
+            <label for="ora-fine">Ora Fine:</label>
+            <input type="time" id="ora-fine" required>
+            <p id="tempo-impiegato">Tempo Impiegato: 0 ore</p>
+        </div>
 
-            <div id="numero-rapportino-group" class="form-group" style="display: none;">
-                <label for="numero-rapportino">Numero Ticket</label>
-                <input type="text" id="numero-rapportino" name="numero-rapportino">
-            </div>
+        <!-- Descrizione -->
+        <div class="form-group">
+            <label for="descrizione">Descrizione:</label>
+            <textarea id="descrizione" rows="4" required></textarea>
+        </div>
 
-            <div id="referente-richiesta-group" class="form-group" style="display: none;">
-                <label for="referente-richiesta">Referente Richiesta</label>
-                <input type="text" id="referente-richiesta" name="referente-richiesta">
-            </div>
-
-            <div id="commessa-group" class="form-group" style="display: none;">
-                <label for="numero-commessa">Numero Commessa</label>
-                <input type="text" id="numero-commessa" name="numero-commessa">
-            </div>
-
-            <div id="trasferta-group" class="form-group" style="display: none;">
-                <label for="trasferta">Trasferta (in km)</label>
-                <input type="number" id="trasferta" name="trasferta">
-            </div>
-
-            <div id="tempo-group" class="form-group" style="display: none;">
-                <label for="tempo-impegnato">Tempo Impegnato</label>
-                <input type="text" id="tempo-impegnato" name="tempo-impegnato" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="descrizione">Descrizione</label>
-                <textarea id="descrizione" name="descrizione" rows="4" required></textarea>
-            </div>
-
-            <button type="submit" class="btn-submit">Invia Rapportino</button>
-        </form>
+        <!-- Salva Rapportino -->
+        <div class="form-group">
+            <button id="salva-rapportino" class="btn-submit">Salva Rapportino</button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tipoRadios = document.querySelectorAll('input[name="tipo"]');
-            const numeroRapportinoGroup = document.getElementById('numero-rapportino-group');
-            const referenteRichiestaGroup = document.getElementById('referente-richiesta-group');
-            const commessaGroup = document.getElementById('commessa-group');
-            const trasfertaGroup = document.getElementById('trasferta-group');
-            const tempoGroup = document.getElementById('tempo-group');
-            const tempoImpegnato = document.getElementById('tempo-impegnato');
+            const tecnicoSelect = document.getElementById('tecnico');
+            const clienteSelect = document.getElementById('cliente');
 
-            tipoRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
+            // Caricamento dinamico dei tecnici e clienti
+            function populateSelect(selectElement, items) {
+                selectElement.innerHTML = '';
+                items.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.textContent = item;
+                    selectElement.appendChild(opt);
+                });
+            }
+
+            function loadItemsFromStorage(key, callback) {
+                const items = JSON.parse(localStorage.getItem(key)) || [];
+                callback(items);
+            }
+
+            loadItemsFromStorage('tecnici', items => populateSelect(tecnicoSelect, items));
+            loadItemsFromStorage('clienti', items => populateSelect(clienteSelect, items));
+
+            // Mostra/Nascondi i campi in base al tipo di rapportino selezionato
+            document.querySelectorAll('input[name="tipo"]').forEach(input => {
+                input.addEventListener('change', function() {
                     const tipo = this.value;
-
-                    if (tipo === 'helpdesk') {
-                        numeroRapportinoGroup.style.display = 'block';
-                        referenteRichiestaGroup.style.display = 'block';
-                        tempoGroup.style.display = 'none';
-                        commessaGroup.style.display = 'none';
-                        trasfertaGroup.style.display = 'none';
-                    } else if (tipo === 'remoto') {
-                        numeroRapportinoGroup.style.display = 'none';
-                        referenteRichiestaGroup.style.display = 'none';
-                        tempoGroup.style.display = 'none';
-                        commessaGroup.style.display = 'none';
-                        trasfertaGroup.style.display = 'none';
-                    } else if (tipo === 'commessa') {
-                        numeroRapportinoGroup.style.display = 'none';
-                        referenteRichiestaGroup.style.display = 'none';
-                        tempoGroup.style.display = 'none';
-                        commessaGroup.style.display = 'block';
-                        trasfertaGroup.style.display = 'block';
-                    } else {
-                        numeroRapportinoGroup.style.display = 'none';
-                        referenteRichiestaGroup.style.display = 'none';
-                        tempoGroup.style.display = 'none';
-                        commessaGroup.style.display = 'none';
-                        trasfertaGroup.style.display = 'none';
-                    }
+                    document.getElementById('numero-commessa-group').style.display = tipo === 'commessa' ? 'block' : 'none';
+                    document.getElementById('trasferta-group').style.display = tipo === 'commessa' ? 'block' : 'none';
+                    document.getElementById('tempo-group').style.display = tipo === 'remoto' ? 'block' : 'none';
                 });
             });
 
-            document.getElementById('rapportino-form').addEventListener('submit', function(event) {
-                event.preventDefault();
+            // Calcolo del tempo impiegato
+            document.getElementById('ora-inizio').addEventListener('change', calculateTempo);
+            document.getElementById('ora-fine').addEventListener('change', calculateTempo);
 
-                const tecnico = document.getElementById('tecnico').value;
-                const cliente = document.getElementById('cliente').value;
+            function calculateTempo() {
+                const oraInizio = document.getElementById('ora-inizio').value;
+                const oraFine = document.getElementById('ora-fine').value;
+
+                if (oraInizio && oraFine) {
+                    const start = new Date(`1970-01-01T${oraInizio}:00`);
+                    const end = new Date(`1970-01-01T${oraFine}:00`);
+                    const diff = (end - start) / (1000 * 60 * 60); // Converti in ore
+                    document.getElementById('tempo-impiegato').textContent = `Tempo Impiegato: ${diff.toFixed(2)} ore`;
+                }
+            }
+
+            // Salvataggio del rapportino
+            document.getElementById('salva-rapportino').addEventListener('click', function() {
+                const tecnico = tecnicoSelect.value;
+                const cliente = clienteSelect.value;
                 const data = document.getElementById('data').value;
+                const numeroTicket = document.getElementById('numero-ticket').value;
                 const tipo = document.querySelector('input[name="tipo"]:checked').value;
-                const numeroRapportino = document.getElementById('numero-rapportino').value;
-                const referenteRichiesta = document.getElementById('referente-richiesta').value;
-                const numeroCommessa = document.getElementById('numero-commessa').value;
-                const trasferta = document.getElementById('trasferta').value;
-                const tempoImpegnato = document.getElementById('tempo-impegnato').value;
+                const numeroCommessa = tipo === 'commessa' ? document.getElementById('numero-commessa').value : '';
+                const trasferta = tipo === 'commessa' ? document.getElementById('trasferta').value : '';
+                const oraInizio = tipo === 'remoto' ? document.getElementById('ora-inizio').value : '';
+                const oraFine = tipo === 'remoto' ? document.getElementById('ora-fine').value : '';
                 const descrizione = document.getElementById('descrizione').value;
+                const tempoImpegnato = tipo === 'remoto' ? document.getElementById('tempo-impiegato').textContent.replace('Tempo Impiegato: ', '').replace(' ore', '') : '';
 
-                if (tecnico && cliente && data && tipo && (tipo !== 'commessa' || numeroCommessa) && (tipo !== 'helpdesk' || numeroRapportino) && (tipo === 'remoto' ? true : tempoImpegnato) && descrizione) {
-                    const rapportino = {
+                if (data && numeroTicket && tipo && descrizione) {
+                    const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
+                    rapportini.push({
                         tecnico,
                         cliente,
                         data,
+                        numeroTicket,
                         tipo,
-                        numeroRapportino: tipo === 'helpdesk' ? numeroRapportino : '',
-                        referenteRichiesta: tipo === 'helpdesk' ? referenteRichiesta : '',
-                        numeroCommessa: tipo === 'commessa' ? numeroCommessa : '',
-                        trasferta: tipo === 'commessa' ? trasferta : '',
-                        tempoImpegnato: tipo === 'remoto' ? tempoImpegnato : '',
+                        numeroCommessa,
+                        trasferta,
+                        oraInizio,
+                        oraFine,
+                        tempoImpegnato,
                         descrizione,
-                        stato: 'in attesa'
-                    };
-
-                    const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
-                    rapportini.push(rapportino);
+                        stato: 'non confermato'
+                    });
                     localStorage.setItem('rapportini', JSON.stringify(rapportini));
 
-                    // Resetta il modulo
-                    document.getElementById('rapportino-form').reset();
-                    numeroRapportinoGroup.style.display = 'none';
-                    referenteRichiestaGroup.style.display = 'none';
-                    tempoGroup.style.display = 'none';
-                    commessaGroup.style.display = 'none';
-                    trasfertaGroup.style.display = 'none';
+                    // Ripulisci il form
+                    document.getElementById('data').value = '';
+                    document.getElementById('numero-ticket').value = '';
+                    document.querySelector('input[name="tipo"]:checked').checked = false;
+                    document.getElementById('numero-commessa').value = '';
+                    document.getElementById('trasferta').value = '';
+                    document.getElementById('ora-inizio').value = '';
+                    document.getElementById('ora-fine').value = '';
+                    document.getElementById('tempo-impiegato').textContent = 'Tempo Impiegato: 0 ore';
+                    document.getElementById('descrizione').value = '';
                 } else {
                     alert('Compila tutti i campi obbligatori.');
                 }
