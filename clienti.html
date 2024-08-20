@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Clienti</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestione Clienti</h1>
+
+        <!-- Form per aggiungere un nuovo cliente -->
+        <div class="form-group">
+            <label for="nome-cliente">Nome Cliente:</label>
+            <input type="text" id="nome-cliente" required>
+        </div>
+        <div class="form-group">
+            <button id="aggiungi-cliente" class="btn-submit">Aggiungi Cliente</button>
+        </div>
+
+        <!-- Tabella dei clienti -->
+        <table id="clienti-table">
+            <thead>
+                <tr>
+                    <th>Nome Cliente</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody id="clienti-body">
+                <!-- I clienti verranno inseriti qui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const clienti = JSON.parse(localStorage.getItem('clienti')) || [];
+            const clientiBody = document.getElementById('clienti-body');
+
+            function renderClienti() {
+                clientiBody.innerHTML = '';
+                clienti.forEach((cliente, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${cliente}</td>
+                        <td><button class="btn-delete" data-index="${index}">Cancella</button></td>
+                    `;
+                    clientiBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        clienti.splice(index, 1);
+                        localStorage.setItem('clienti', JSON.stringify(clienti));
+                        renderClienti();
+                    });
+                });
+            }
+
+            document.getElementById('aggiungi-cliente').addEventListener('click', function() {
+                const nomeCliente = document.getElementById('nome-cliente').value.trim();
+                if (nomeCliente !== '') {
+                    clienti.push(nomeCliente);
+                    localStorage.setItem('clienti', JSON.stringify(clienti));
+                    document.getElementById('nome-cliente').value = '';
+                    renderClienti();
+                } else {
+                    alert('Inserisci un nome cliente valido.');
+                }
+            });
+
+            renderClienti();
+        });
+    </script>
+</body>
+</html>

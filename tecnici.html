@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Tecnici</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestione Tecnici</h1>
+
+        <!-- Form per aggiungere un nuovo tecnico -->
+        <div class="form-group">
+            <label for="nome-tecnico">Nome Tecnico:</label>
+            <input type="text" id="nome-tecnico" required>
+        </div>
+        <div class="form-group">
+            <button id="aggiungi-tecnico" class="btn-submit">Aggiungi Tecnico</button>
+        </div>
+
+        <!-- Tabella dei tecnici -->
+        <table id="tecnici-table">
+            <thead>
+                <tr>
+                    <th>Nome Tecnico</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody id="tecnici-body">
+                <!-- I tecnici verranno inseriti qui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tecnici = JSON.parse(localStorage.getItem('tecnici')) || [];
+            const tecniciBody = document.getElementById('tecnici-body');
+
+            function renderTecnici() {
+                tecniciBody.innerHTML = '';
+                tecnici.forEach((tecnico, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tecnico}</td>
+                        <td><button class="btn-delete" data-index="${index}">Cancella</button></td>
+                    `;
+                    tecniciBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        tecnici.splice(index, 1);
+                        localStorage.setItem('tecnici', JSON.stringify(tecnici));
+                        renderTecnici();
+                    });
+                });
+            }
+
+            document.getElementById('aggiungi-tecnico').addEventListener('click', function() {
+                const nomeTecnico = document.getElementById('nome-tecnico').value.trim();
+                if (nomeTecnico !== '') {
+                    tecnici.push(nomeTecnico);
+                    localStorage.setItem('tecnici', JSON.stringify(tecnici));
+                    document.getElementById('nome-tecnico').value = '';
+                    renderTecnici();
+                } else {
+                    alert('Inserisci un nome tecnico valido.');
+                }
+            });
+
+            renderTecnici();
+        });
+    </script>
+</body>
+</html>

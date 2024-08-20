@@ -153,3 +153,17 @@ button#unisci-tempi {
 button#unisci-tempi:hover {
     background-color: #003366;
 }
+
+button.btn-submit {
+    background-color: #004d99;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button.btn-submit:hover {
+    background-color: #003366;
+}
