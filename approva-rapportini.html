@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approva Rapportini</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f8f8;
+        }
+        .btn {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn.download {
+            background-color: #28a745;
+        }
+        .btn.download:hover {
+            background-color: #218838;
+        }
+        .btn.delete {
+            background-color: #dc3545;
+        }
+        .btn.delete:hover {
+            background-color: #c82333;
+        }
+        .action-buttons {
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        input[type="time"] {
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .approved {
+            background-color: #d4edda; /* Colore verde chiaro per i rapportini approvati */
+        }
+        .deleted {
+            background-color: #f8d7da; /* Colore rosso chiaro per i rapportini eliminati */
+            transition: background-color 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Approva Rapportini</h1>
+        <table id="rapportini-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Cliente</th>
+                    <th>Tecnico</th>
+                    <th>Orario di Inizio</th>
+                    <th>Orario di Fine</th>
+                    <th>Descrizione</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Le righe saranno popolate dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.6.0/jspdf.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableBody = document.querySelector('#rapportini-table tbody');
+            const rapportini = JSON.parse(localStorage.getItem('rapportini')) || [];
+
+            rapportini.filter(r => r.stato === 'in attesa di approvazione').forEach((rapportino, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rapportino.data}</td>
+                    <td>${rapportino.tipo}</td>
+                    <td>${rapportino.cliente}</td>
+                    <td>${rapportino.tecnico}</td>
+                    <td><input type="time" value="${rapportino.oraInizio}" data-index="${index}" class="orario-input" /></td>
+                    <td><input type="time" value="${rapportino.oraFine}" data-index="${index}" class="orario-input" /></td>
+                    <td><textarea class="editable descrizione-input" data-index="${index}" rows="4">${rapportino.descrizione}</textarea></td>
+                    <td class="action-buttons">
+                        <button class="btn download" onclick="scaricaPDF(${index})">Scarica</button>
+                        <button class="btn" onclick="approvaRapportino(${index})">Approva</button>
+                        <button class="btn delete" onclick="eliminaRapportino(${index})">Elimina</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            window.scaricaPDF = function(index) {
+                const rapportini = JSON.parse(localStorage.getItem('rapportini'));
+                const rapportino = rapportini[index];
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.text(`Rapportino - ${rapportino.tipo}`, 10, 10);
+                doc.text(`Data: ${rapportino.data}`, 10, 20);
+                doc.text(`Cliente: ${rapportino.cliente}`, 10, 30);
+                doc.text(`Tecnico: ${rapportino.tecnico}`, 10, 40);
+                doc.text(`Orario Inizio: ${rapportino.oraInizio}`, 10, 50);
+                doc.text(`Orario Fine: ${rapportino.oraFine}`, 10, 60);
+                doc.text(`Descrizione: ${rapportino.descrizione}`, 10, 70);
+
+                // Scarica il PDF
+                doc.save(`rapportino-${index}.pdf`);
+            }
+
+            window.approvaRapportino = function(index) {
+                const rapportini = JSON.parse(localStorage.getItem('rapportini'));
+                rapportini[index].stato = 'confermato';
+                localStorage.setItem('rapportini', JSON.stringify(rapportini));
+
+                // Aggiungi il rapportino approvato alla pagina di visualizzazione
+                const visualizzazioneRapportini = JSON.parse(localStorage.getItem('visualizzazioneRapportini')) || [];
+                visualizzazioneRapportini.push(rapportini[index]);
+                localStorage.setItem('visualizzazioneRapportini', JSON.stringify(visualizzazioneRapportini));
+
+                // Rimuovi la riga dalla tabella e ricrea la tabella aggiornata
+                tableBody.innerHTML = '';
+                rapportini.filter(r => r.stato === 'in attesa di approvazione').forEach((rapportino, i) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${rapportino.data}</td>
+                        <td>${rapportino.tipo}</td>
+                        <td>${rapportino.cliente}</td>
+                        <td>${rapportino.tecnico}</td>
+                        <td><input type="time" value="${rapportino.oraInizio}" data-index="${i}" class="orario-input" /></td>
+                        <td><input type="time" value="${rapportino.oraFine}" data-index="${i}" class="orario-input" /></td>
+                        <td><textarea class="editable descrizione-input" data-index="${i}" rows="4">${rapportino.descrizione}</textarea></td>
+                        <td class="action-buttons">
+                            <button class="btn download" onclick="scaricaPDF(${i})">Scarica</button>
+                            <button class="btn" onclick="approvaRapportino(${i})">Approva</button>
+                            <button class="btn delete" onclick="eliminaRapportino(${i})">Elimina</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                alert('Rapportino approvato!');
+            }
+
+            window.eliminaRapportino = function(index) {
+                const row = document.querySelectorAll('#rapportini-table tbody tr')[index];
+                row.classList.add('deleted');
+                
+                // Attendere 1 secondo (tempo della transizione) prima di rimuovere la riga
+                setTimeout(() => {
+                    let rapportini = JSON.parse(localStorage.getItem('rapportini'));
+                    rapportini.splice(index, 1);
+                    localStorage.setItem('rapportini', JSON.stringify(rapportini));
+                    
+                    // Rimuovere la riga dalla tabella
+                    row.remove();
+                    
+                    alert('Rapportino eliminato!');
+                }, 1000); // Tempo della transizione in millisecondi
+            }
+        });
+    </script>
+</body>
+</html>

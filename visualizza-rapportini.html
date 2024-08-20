@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Rapportini</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f8f8;
+        }
+        .approved {
+            background-color: #d4edda; /* Colore verde chiaro per i rapportini approvati */
+        }
+        .rejected {
+            background-color: #f8d7da; /* Colore rosso chiaro per i rapportini rifiutati */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Visualizza Rapportini</h1>
+        <table id="rapportini-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Cliente</th>
+                    <th>Tecnico</th>
+                    <th>Orario di Inizio</th>
+                    <th>Orario di Fine</th>
+                    <th>Descrizione</th>
+                    <th>Stato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Le righe saranno popolate dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableBody = document.querySelector('#rapportini-table tbody');
+            const rapportini = JSON.parse(localStorage.getItem('visualizzazioneRapportini')) || [];
+
+            rapportini.forEach(rapportino => {
+                const row = document.createElement('tr');
+                row.className = rapportino.stato === 'confermato' ? 'approved' : 'rejected';
+                row.innerHTML = `
+                    <td>${rapportino.data}</td>
+                    <td>${rapportino.tipo}</td>
+                    <td>${rapportino.cliente}</td>
+                    <td>${rapportino.tecnico}</td>
+                    <td>${rapportino.oraInizio}</td>
+                    <td>${rapportino.oraFine}</td>
+                    <td>${rapportino.descrizione}</td>
+                    <td>${rapportino.stato}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
