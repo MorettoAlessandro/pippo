@@ -2,11 +2,11 @@
 :root {
     --primary-bg: #2A609F;
     --secondary-bg: #fff;
-    --text-light: #fff;
+    --text-light: #008000; /* Cambiato da bianco a verde */
     --text-dark: #333;
     --approved-bg: #d4edda;
     --deleted-bg: #f8d7da;
-    --deleted-fade-out: rgba(248, 215, 218, 0); /* Opacità zero */
+    --deleted-fade-out: 0; /* Opacità zero */
 }
 
 /* Base styling */
@@ -18,13 +18,13 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
     margin: 0;
+    padding: 20px;
 }
 
 .container {
-    width: 100%;
-    max-width: 1200px;
+    width: 90%;
+    max-width: 1200px; /* Mantieni comunque un limite massimo */
     margin: auto;
     padding: 25px;
     background: var(--secondary-bg);
@@ -44,26 +44,45 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
-    overflow-x: auto;
-    display: block;
     border-radius: 12px;
     overflow: hidden;
 }
 
-th {
-    background-color: var(--primary-bg);
-    color: var(--text-light);
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+    white-space: normal;
+    vertical-align: middle;
 }
 
-td {
-    background-color: var(--secondary-bg);
-    color: var(--text-dark);
+th {
+    background-color: var(--primary-bg);
+    color: var(--text-light); /* Colore del testo cambiato a verde */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Specific column widths */
+th:nth-child(1), td:nth-child(1) { width: 10%; }
+th:nth-child(2), td:nth-child(2) { width: 10%; }
+th:nth-child(3), td:nth-child(3) { width: 15%; }
+th:nth-child(4), td:nth-child(4) { width: 15%; }
+th:nth-child(5), td:nth-child(5) { width: 15%; }
+th:nth-child(6), td:nth-child(6) { width: 15%; }
+th:nth-child(7), td:nth-child(7) { width: 20%; }
+th:nth-child(8), td:nth-child(8) { width: 10%; }
+
+td.description {
+    max-width: 200px;
+    overflow: hidden;
 }
 
 .btn {
     display: inline-block;
     background-color: var(--primary-bg);
-    color: var(--text-light);
+    color: var(--text-light); /* Cambiato da bianco a verde */
     border: 2px solid var(--primary-bg);
     padding: 12px 20px;
     border-radius: 25px;
@@ -79,16 +98,6 @@ td {
     background-color: #1F4A7A;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
-    color: var(--text-light);
-}
-
-.btn.delete {
-    background-color: #67A547;
-    color: var(--text-light);
-}
-
-.btn.delete:hover {
-    background-color: #4E7C35;
 }
 
 textarea, input[type="time"] {
@@ -113,14 +122,12 @@ textarea:focus, input[type="time"]:focus {
 
 .approved {
     background-color: var(--approved-bg);
-    color: var(--text-dark);
     border-radius: 12px;
     transition: background-color 0.3s;
 }
 
 .deleted {
     background-color: var(--deleted-bg);
-    color: var(--text-dark);
     border-radius: 12px;
     transition: background-color 1s ease, opacity 0.5s ease;
 }
@@ -165,23 +172,73 @@ textarea:focus, input[type="time"]:focus {
         padding: 12px 14px;
     }
 }
+/* Stili generali */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
 
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.btn-submit {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #ffffff; /* Cambiato da bianco a verde */
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-top: 20px;
 }
 
 th, td {
-    padding: 12px;
+    padding: 10px;
+    border: 1px solid #DDD;
     text-align: left;
-    border-bottom: 1px solid #ddd;
-    word-wrap: break-word; /* Permette al testo di andare a capo */
-    white-space: normal;  /* Permette la visualizzazione del testo su più righe */
 }
 
-td.description {
-    max-width: 200px; /* Imposta una larghezza massima per la colonna della descrizione */
-    overflow: hidden; /* Nasconde il testo che eccede la larghezza */
+th {
+    background-color: #F4F4F4;
+}
+
+/* Stile per allineare il pulsante di cancellazione */
+td:last-child {
+    text-align: center;
+    width: 100px; /* Imposta una larghezza fissa per mantenere l'allineamento */
+}
+
+.btn-delete {
+    padding: 5px 10px;
+    background-color: #FF6347;
+    color: #ffffff; /* Cambiato da bianco a verde */
+    border: none;
+    cursor: pointer;
+    text-align: center;
 }

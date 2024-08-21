@@ -37,6 +37,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const clienti = JSON.parse(localStorage.getItem('clienti')) || [];
             const clientiBody = document.getElementById('clienti-body');
+            const nomeClienteInput = document.getElementById('nome-cliente');
+            const aggiungiClienteButton = document.getElementById('aggiungi-cliente');
 
             function renderClienti() {
                 clientiBody.innerHTML = '';
@@ -59,15 +61,24 @@
                 });
             }
 
-            document.getElementById('aggiungi-cliente').addEventListener('click', function() {
-                const nomeCliente = document.getElementById('nome-cliente').value.trim();
+            function aggiungiCliente() {
+                const nomeCliente = nomeClienteInput.value.trim();
                 if (nomeCliente !== '') {
                     clienti.push(nomeCliente);
                     localStorage.setItem('clienti', JSON.stringify(clienti));
-                    document.getElementById('nome-cliente').value = '';
+                    nomeClienteInput.value = '';
                     renderClienti();
                 } else {
                     alert('Inserisci un nome cliente valido.');
+                }
+            }
+
+            aggiungiClienteButton.addEventListener('click', aggiungiCliente);
+
+            nomeClienteInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevenire l'azione predefinita (se fosse un modulo)
+                    aggiungiCliente();
                 }
             });
 

@@ -37,6 +37,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const tecnici = JSON.parse(localStorage.getItem('tecnici')) || [];
             const tecniciBody = document.getElementById('tecnici-body');
+            const nomeTecnicoInput = document.getElementById('nome-tecnico');
+            const aggiungiTecnicoButton = document.getElementById('aggiungi-tecnico');
 
             function renderTecnici() {
                 tecniciBody.innerHTML = '';
@@ -59,15 +61,24 @@
                 });
             }
 
-            document.getElementById('aggiungi-tecnico').addEventListener('click', function() {
-                const nomeTecnico = document.getElementById('nome-tecnico').value.trim();
+            function aggiungiTecnico() {
+                const nomeTecnico = nomeTecnicoInput.value.trim();
                 if (nomeTecnico !== '') {
                     tecnici.push(nomeTecnico);
                     localStorage.setItem('tecnici', JSON.stringify(tecnici));
-                    document.getElementById('nome-tecnico').value = '';
+                    nomeTecnicoInput.value = '';
                     renderTecnici();
                 } else {
                     alert('Inserisci un nome tecnico valido.');
+                }
+            }
+
+            aggiungiTecnicoButton.addEventListener('click', aggiungiTecnico);
+
+            nomeTecnicoInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevenire l'azione predefinita (se fosse un modulo)
+                    aggiungiTecnico();
                 }
             });
 
