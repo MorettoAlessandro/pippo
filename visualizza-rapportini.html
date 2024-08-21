@@ -184,15 +184,45 @@
             // Funzione per generare e scaricare il PDF
             function generateAndDownloadPDF(rapportino) {
                 const pdf = new jsPDF();
-                pdf.text(`Data: ${rapportino.data}`, 10, 10);
-                pdf.text(`Tipo: ${rapportino.tipo}`, 10, 20);
-                pdf.text(`Cliente: ${rapportino.cliente}`, 10, 30);
-                pdf.text(`Tecnico: ${rapportino.tecnico}`, 10, 40);
-                pdf.text(`Orario di Inizio: ${rapportino.oraInizio}`, 10, 50);
-                pdf.text(`Orario di Fine: ${rapportino.oraFine}`, 10, 60);
-                pdf.text(`Descrizione: ${rapportino.descrizione}`, 10, 70);
-                pdf.text(`Stato: ${rapportino.stato}`, 10, 80);
+                
+                // Aggiungi intestazione
+                pdf.setFontSize(18);
+                pdf.setFont("helvetica", "bold");
+                pdf.text('Rapportino', 10, 20);
+                
+                // Separatore
+                pdf.setDrawColor(0, 0, 0);
+                pdf.line(10, 25, 200, 25);
 
+                // Imposta il font per il resto del testo
+                pdf.setFontSize(12);
+                pdf.setFont("helvetica", "normal");
+
+                // Aggiungi le informazioni del rapportino
+                let y = 30;
+                pdf.text(`Data: ${rapportino.data}`, 10, y);
+                y += 10;
+                pdf.text(`Tipo: ${rapportino.tipo}`, 10, y);
+                y += 10;
+                pdf.text(`Cliente: ${rapportino.cliente}`, 10, y);
+                y += 10;
+                pdf.text(`Tecnico: ${rapportino.tecnico}`, 10, y);
+                y += 10;
+                pdf.text(`Orario di Inizio: ${rapportino.oraInizio}`, 10, y);
+                y += 10;
+                pdf.text(`Orario di Fine: ${rapportino.oraFine}`, 10, y);
+                y += 10;
+                pdf.text(`Descrizione:`, 10, y);
+                y += 10;
+
+                // Aggiungi la descrizione con una larghezza fissa
+                pdf.setFontSize(12);
+                pdf.text(rapportino.descrizione, 10, y, { maxWidth: 180 });
+                y += 20; // Aggiungi uno spazio dopo la descrizione
+
+                pdf.text(`Stato: ${rapportino.stato}`, 10, y);
+
+                // Salva il PDF
                 pdf.save(`rapportino-${rapportino.data}.pdf`);
             }
 
